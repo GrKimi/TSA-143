@@ -44,7 +44,8 @@ int main()
 {
     cout << "Введите угол в радианах: ";
     double radians = getRadians();
-
+    
+    double value = 0;
     double total_degrees = toDegrees(radians);
     int degrees = getDegrees(total_degrees);
     int minutes = getMinutes(total_degrees);
