@@ -1,6 +1,7 @@
 #include <iostream>
 #include <limits>
-#include <cmath>
+#include <cmath> 
+
 using namespace std;
 
 /**
@@ -31,71 +32,59 @@ bool isDomain(const double x);
 
 int main()
 {
-    cout << "Enter xn (-2): ";
-    double xstart = -2; 
-    cout << "Enter xk (0): ";
-    double xend = 0; 
-    cout << "Enter step (0.2): ";
-    double step = 0.2; 
-    checkStep(step); 
+    cout << "Enter xn: ";
+    double xstart = getValue();
+    cout << "Enter xk: ";
+    double xend = getValue();
+    cout << "Enter step: ";
+    double step = getValue();
+    checkStep(step);
 
-    for (double x = xstart; x <= xend; x += step)
+    
+    for (double x = xstart; x < xend + step; x += step)
     {
-        cout << "x = " << x; 
-        if (isDomain(x)) 
+        cout << "x = " << x;
+        if (isDomain(x))
         {
-            double y = getY(x); 
-            if (y != -1) 
-            {
-                cout << " y = " << y << endl;
-            }
-            else
-            {
-                cout << " not in domain" << endl; 
-            }
+            cout << " y = " << getY(x) << endl;
         }
         else
         {
-            cout << " not in domain" << endl; 
+            cout << " not in domain" << endl;
         }
     }
-    return 0; 
+    
+    return 0;
 }
 
 double getValue()
 {
     double value;
-    cin >> value; 
-    if (cin.fail()) 
+    cin >> value;
+    if (cin.fail())
     {
-        cout << "Incorrect value" << endl; 
+        cout << "Incorrect value" << endl;
         abort();
     }
-    return value; 
+    return value;
 }
 
 void checkStep(const double step)
 {
-    if (step <= 0) 
+    if (step <= 0)
     {
         cout << "Error value" << endl;
-        abort(); 
+        abort();
     }
 }
 
 double getY(const double x)
 {
     double denominator = 2 * x + x * x; 
-    if (denominator <= 0) 
-    {
-        return -1; 
-    }
-    
-    double result = log(1 / denominator); 
-    return result; 
+    return log(1 / denominator); 
 }
 
 bool isDomain(const double x)
 {
-    return !(abs(2 * x + x * x) <= std::numeric_limits<double>::epsilon()); // Проверяем допустимость значения x
+    return !(abs(2 * x + x * x) <= std::numeric_limits<double>::epsilon());
 }
