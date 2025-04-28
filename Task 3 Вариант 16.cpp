@@ -30,6 +30,10 @@ double getY(const double x);
  */
 bool isDomain(const double x);
 
+/**
+ * @brief точка входа в программу
+ * @return 0, если программа выполнена корректно, иначе 1 
+ */
 int main()
 {
     cout << "Enter xn: ";
@@ -59,7 +63,7 @@ int main()
 
 double getValue()
 {
-    double value;
+    double value = 0;
     cin >> value;
     if (cin.fail())
     {
