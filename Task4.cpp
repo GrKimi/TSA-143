@@ -39,7 +39,7 @@ double sumN(const int n);
  * @param k Текущий индекс (номер члена)
  * @return Следующий член ряда
  */
-double getNext(const int k);
+double getNext(const double current, const int k);
 
 /**
  * @brief Вычисляет сумму членов ряда, больших или равных заданной точности по модулю
@@ -112,36 +112,35 @@ void checkN(const int n)
 }
 
 double sumN(const int n) 
-{  
-    double sum = 0.0; 
+{ 
+    double current = 1.0;
+    double sum = current; 
     
     for (int k = 0; k < n; k++) 
     { 
-        sum += getNext(k); 
+        current = getNext(current, k);
+        sum += current; 
     }
-    
     return sum;
 }
 
-double getNext(const int k) 
+double getNext(const double current, const int k) 
 {
-    double numerator = 1.0 + k;
-    double denominator = tgamma(k + 3);
-    
-    return pow(-1, k) * (numerator / denominator);
+    double numerator = (current * (-1.0) * (k + 2)) / ((k + 3) * (k + 1));
+    return numerator;
 }
 
 double sumE(const double e) 
 {
     double sum = 0.0;
-    double current;
+    double current = 1.0;
     int k = 0;
 
-    do {
-        current = getNext(k);
+    while (abs(current) >= e)
+    {
         sum += current;
+        current = getNext(current, k);
         k++;
-    } while (abs(current) >= e);
-
+    }
     return sum;
 }
