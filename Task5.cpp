@@ -168,18 +168,19 @@ void fillArray(int* arr, const size_t n)
         {
             for (size_t i = 0; i < n; i++) 
             {
-                while (true)
-                {
-                    cout << "Enter arr[" << i + 1 << "] (-30 to 70): ";
-                    int value = getValue();
+                cout << "Enter arr[" << i + 1 << "] (-30 to 70): ";
+                int value = getValue();
 
-                    if (value >= -30 && value <= 70) 
-                    {
-                        arr[i] = value;
-                        break;
-                    }
-                    cout << "Error! Value must be between -30 and 70. Try again." << endl;
+                if (value >= -30 && value <= 70) 
+                {
+                    arr[i] = value;
                 }
+                else
+                {
+                    cout << "Error! Value must be between -30 and 70" << endl;
+                    abort();
+                }
+                
             }
             break;
         }
