@@ -46,7 +46,7 @@ void printArray(int* arr, const size_t n);
 int findMaxAbs(int* arr, const size_t n);
 
 /**
- * @brief Заменяет второй элемент массива на максимальный отрицательный
+ * @brief Заменяет предпоследний элемент массива на максимальный
  * @param arr Указатель на массив
  * @param n Размер массива
  * @return Выводит предупреждение если массив слишком мал или не найдено допустимых элементов для замены
@@ -60,7 +60,7 @@ void replacePenultimateWithMaxAbs(int* arr, const size_t n);
  * @param N число на которое элемент должен делиться без остатка
  * @return Количество элементов удовлетворяющих условию
  */
-int countDivisibleByN(int* arr, size_t n, int N);
+int countDivisibleByN(const int* arr, size_t n, const int N);
 
 /**
  * @brief Ищет номер первой пары соседних элементов с разными знаками
@@ -68,7 +68,7 @@ int countDivisibleByN(int* arr, size_t n, int N);
  * @param n Размер массива
  * @return Индекс первого элемента пары или -1 если пара не найдена
  */
-int findFirstPairWithDifferentSigns(int* arr, size_t n);
+int findFirstPairWithDifferentSigns(const int* arr, size_t n);
 
 /**
 * @brief Перечисление для выбора способа заполнения данных
@@ -89,17 +89,22 @@ int main()
     fillArray(arr, n);
     cout << "Original array: ";
     printArray(arr, n);
+    int* copiArr = new int[n];
+    for (size_t i = 0; i < n; i++)
+    {
+        copiArr[i] = arr[i];
+    }
 
-    replacePenultimateWithMaxAbs(arr, n);
+    replacePenultimateWithMaxAbs(copiArr, n);
     cout << "Array after replacing penultimate element with max absolute value: ";
-    printArray(arr, n);
+    printArray(copiArr, n);
 
     cout << "Enter N for task 2: ";
     int N = getValue();
-    int count = countDivisibleByN(arr, n, N);
+    int count = countDivisibleByN(copiArr, n, N);
     cout << "Number of elements divisible by N: " << count << endl;
 
-    int pairIndex = findFirstPairWithDifferentSigns(arr, n);
+    int pairIndex = findFirstPairWithDifferentSigns(copiArr, n);
     if (pairIndex == -1) 
     {
         cout << "No such pair found." << endl;
@@ -109,6 +114,7 @@ int main()
     }
 
     delete[] arr;
+    delete[] copiArr;
     return 0;
 }
 
@@ -162,11 +168,11 @@ void fillArray(int* arr, const size_t n)
         {
             for (size_t i = 0; i < n; i++) 
             {
-                while (true) 
+                while (true)
                 {
                     cout << "Enter arr[" << i + 1 << "] (-30 to 70): ";
                     int value = getValue();
-                    
+
                     if (value >= -30 && value <= 70) 
                     {
                         arr[i] = value;
@@ -194,7 +200,7 @@ void printArray(int* arr, const size_t n)
 
 int findMaxAbs(int* arr, const size_t n) 
 {
-    int maxAbs = -31; 
+    int maxAbs = arr[1]; 
     for (size_t i = 0; i < n; i++) 
     {
         if (arr[i] > maxAbs) 
@@ -215,7 +221,7 @@ void replacePenultimateWithMaxAbs(int* arr, const size_t n)
 
     int maxAbs = findMaxAbs(arr, n);
     
-    if (maxAbs == -31) 
+    if (maxAbs == arr[1]) 
     {
         cout << "No valid elements found for replacement." << endl;
     } 
@@ -225,7 +231,7 @@ void replacePenultimateWithMaxAbs(int* arr, const size_t n)
     }
 }
 
-int countDivisibleByN(int* arr, size_t n, int N) 
+int countDivisibleByN(const int* arr, size_t n, const int N) 
 {
     int count = 0;
     for (size_t i = 0; i < n; i++) 
@@ -238,7 +244,7 @@ int countDivisibleByN(int* arr, size_t n, int N)
     return count;
 }
 
-int findFirstPairWithDifferentSigns(int* arr, size_t n) 
+int findFirstPairWithDifferentSigns(const int* arr, size_t n) 
 {
     for (size_t i = 0; i < n - 1; i++) 
     {
