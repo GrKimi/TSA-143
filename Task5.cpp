@@ -71,6 +71,14 @@ int countDivisibleByN(const int* arr, size_t n, const int N);
 int findFirstPairWithDifferentSigns(const int* arr, size_t n);
 
 /**
+ * @brief Создает копию массива
+ * @param source Исходный массив
+ * @param n Размер массива
+ * @return Указатель на новый массив-копию
+ */
+int* copyArray(const int* copiArr, const size_t n);
+
+/**
 * @brief Перечисление для выбора способа заполнения данных
 * @param MANUALY Выбор ручного заполнения массива
 * @param RANDOM Выбор автоматического заполнения массива
@@ -89,11 +97,7 @@ int main()
     fillArray(arr, n);
     cout << "Original array: ";
     printArray(arr, n);
-    int* copiArr = new int[n];
-    for (size_t i = 0; i < n; i++)
-    {
-        copiArr[i] = arr[i];
-    }
+    int* copiArr = copyArray(arr, n);
 
     replacePenultimateWithMaxAbs(copiArr, n);
     cout << "Array after replacing penultimate element with max absolute value: ";
@@ -255,4 +259,14 @@ int findFirstPairWithDifferentSigns(const int* arr, size_t n)
         }
     }
     return -1;
+}
+
+int* copyArray(const int* source, const size_t n) 
+{
+    int* newArray = new int[n];
+    for (size_t i = 0; i < n; i++)
+    {
+        newArray[i] = source[i];
+    }
+    return newArray;
 }
