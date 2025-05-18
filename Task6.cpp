@@ -136,12 +136,10 @@ int main()
     cout << "\nOriginal array:" << endl;
     printArray(array, m, n);
     
-    // 1. Заменить четные элементы каждой строки нулем
     replaceEvenWithZero(array, m, n);
     cout << "\nArray after replacing even elements with zero:" << endl;
     printArray(array, m, n);
     
-    // 2. Вставить строки после строк с минимальным значением
     array = insertRowsAfterMin(array, m, n);
     cout << "\nArray after inserting rows:" << endl;
     printArray(array, m, n);
@@ -150,15 +148,13 @@ int main()
     return 0;
 }
 
-// Реализации функций
-
 void replaceEvenWithZero(int** array, const size_t m, const size_t n)
 {
     for (size_t i = 0; i < m; i++)
     {
         for (size_t j = 0; j < n; j++)
         {
-            if (array[i][j] % 2 == 0) // Если элемент четный
+            if (array[i][j] % 2 == 0)
             {
                 array[i][j] = 0;
             }
@@ -181,12 +177,10 @@ int findMinInRow(int* row, const size_t n)
 
 int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
 {
-    // Сначала подсчитаем, сколько строк нужно вставить
     size_t insertCount = 0;
     for (size_t i = 0; i < m; i++)
     {
         int minInRow = findMinInRow(array[i], n);
-        // Проверяем, содержит ли строка минимальное значение
         bool containsMin = false;
         for (size_t j = 0; j < n; j++)
         {
@@ -201,14 +195,12 @@ int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
     
     if (insertCount == 0) return array; // Нет строк для вставки
     
-    // Создаем новый массив с дополнительными строками
     size_t newM = m + insertCount;
     int** newArray = getNewArray(newM, n);
     
     size_t newRow = 0;
     for (size_t i = 0; i < m; i++)
     {
-        // Копируем текущую строку
         for (size_t j = 0; j < n; j++)
         {
             newArray[newRow][j] = array[i][j];
@@ -216,7 +208,6 @@ int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
         newRow++;
         
         int minInRow = findMinInRow(array[i], n);
-        // Проверяем, содержит ли строка минимальное значение
         bool containsMin = false;
         for (size_t j = 0; j < n; j++)
         {
@@ -226,28 +217,20 @@ int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
                 break;
             }
         }
-        
-        // Если содержит, вставляем новую строку
         if (containsMin)
         {
             for (size_t j = 0; j < n; j++)
             {
-                newArray[newRow][j] = j + 1; // Заполняем значениями 1, 2, 3, ..., n
+                newArray[newRow][j] = j + 1;
             }
             newRow++;
         }
     }
     
-    // Удаляем старый массив
     deleteArray(array, m, n);
-    
-    // Обновляем количество строк
-    m = newM;
-    
+    m = newM;    
     return newArray;
 }
-
-// Остальные функции остаются такими же, как в вашем примере
 
 int getValue()
 {
