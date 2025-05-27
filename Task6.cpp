@@ -66,12 +66,20 @@ void fillRandom(int** array, const size_t m, const size_t n, const int start, co
 void deleteArray(int** array, const size_t m, const size_t n);
 
 /**
+ * @brief Создает копию массива
+ * @param source Исходный массив
+ * @param n,m Размер массива
+ * @return Указатель на новый массив-копию
+ */
+int** copyArray(int** array, const size_t m, const size_t n);
+
+/**
  * @brief Заменяет четные элементы массива нулями
  * @param array Указатель на массив
  * @param m Количество строк
  * @param n Количество столбцов
  */
-void replaceEvenWithZero(int** array, const size_t m, const size_t n);
+int** replaceEvenWithZero(int** array, const size_t m, const size_t n);
 
 /**
  * @brief Находит минимальное значение в строке массива
@@ -79,7 +87,7 @@ void replaceEvenWithZero(int** array, const size_t m, const size_t n);
  * @param n Количество элементов в строке
  * @return Минимальное значение в строке
  */
-int findMinInRow(int* row, const size_t n);
+int findMinInRow(const int* row, const size_t n);
 
 /**
  * @brief Вставляет строки (1,2,3...) после строк, содержащих минимальное значение
@@ -88,7 +96,7 @@ int findMinInRow(int* row, const size_t n);
  * @param n Количество столбцов
  * @return Указатель на новый массив
  */
-int** insertRowsAfterMin(int** array, size_t& m, const size_t n);
+int** insertRowsAfterMin(int** array, const size_t m, const size_t n, size_t newM);
 
 /**
  * @brief Перечисление для выбора способа заполнения массива
@@ -122,6 +130,12 @@ int main()
             start = getValue();
             cout << "Enter end: ";
             end = getValue();
+            if (start >= end) 
+            {
+                cout << "Error: start must be less than end" << endl;
+                deleteArray(array, m, n);
+                return 1;
+            }
             fillRandom(array, m, n, start, end);
             break;
         case MANUAL:
@@ -133,36 +147,42 @@ int main()
             return 1;
     }
     
-    cout << "\nOriginal array:" << endl;
+    cout << "Original array:" << endl;
     printArray(array, m, n);
     
-    replaceEvenWithZero(array, m, n);
-    cout << "\nArray after replacing even elements with zero:" << endl;
-    printArray(array, m, n);
+    int** array1 = replaceEvenWithZero(array, m, n);
+    cout << "Array after replacing even elements with zero:" << endl;
+    printArray(array1, m, n);
     
-    array = insertRowsAfterMin(array, m, n);
-    cout << "\nArray after inserting rows:" << endl;
-    printArray(array, m, n);
+    size_t newM;
+    int** array2 = insertRowsAfterMin(array, m, n, newM);
+    cout << "Array after inserting rows:" << endl;
+    printArray(array2, newM, n);
     
     deleteArray(array, m, n);
+    deleteArray(array1, m, n);
+    deleteArray(array2, newM, n);
+    
     return 0;
 }
 
-void replaceEvenWithZero(int** array, const size_t m, const size_t n)
+int** replaceEvenWithZero(int** array, const size_t m, const size_t n)
 {
+    int** newArray = copyArray(array, m, n);
     for (size_t i = 0; i < m; i++)
     {
         for (size_t j = 0; j < n; j++)
         {
-            if (array[i][j] % 2 == 0)
+            if (newArray[i][j] % 2 == 0)
             {
-                array[i][j] = 0;
+                newArray[i][j] = 0;
             }
         }
     }
+    return newArray;
 }
 
-int findMinInRow(int* row, const size_t n)
+int findMinInRow(const int* row, const size_t n)
 {
     int minVal = row[0];
     for (size_t j = 1; j < n; j++)
@@ -175,27 +195,33 @@ int findMinInRow(int* row, const size_t n)
     return minVal;
 }
 
-int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
+int** insertRowsAfterMin(int** array, const size_t m, const size_t n, size_t newM)
 {
+    int* rowMins = new int[m];
+    for (size_t i = 0; i < m; i++)
+    {
+        rowMins[i] = findMinInRow(array[i], n);
+    }
+    
+    int globalMin = rowMins[0];
+    for (size_t i = 1; i < m; i++)
+    {
+        if (rowMins[i] < globalMin)
+        {
+            globalMin = rowMins[i];
+        }
+    }
+    
     size_t insertCount = 0;
     for (size_t i = 0; i < m; i++)
     {
-        int minInRow = findMinInRow(array[i], n);
-        bool containsMin = false;
-        for (size_t j = 0; j < n; j++)
+        if (rowMins[i] == globalMin)
         {
-            if (array[i][j] == minInRow)
-            {
-                containsMin = true;
-                break;
-            }
+            insertCount++;
         }
-        if (containsMin) insertCount++;
     }
     
-    if (insertCount == 0) return array; // Нет строк для вставки
-    
-    size_t newM = m + insertCount;
+    newM = m + insertCount;
     int** newArray = getNewArray(newM, n);
     
     size_t newRow = 0;
@@ -207,28 +233,17 @@ int** insertRowsAfterMin(int** array, size_t& m, const size_t n)
         }
         newRow++;
         
-        int minInRow = findMinInRow(array[i], n);
-        bool containsMin = false;
-        for (size_t j = 0; j < n; j++)
-        {
-            if (array[i][j] == minInRow)
-            {
-                containsMin = true;
-                break;
-            }
-        }
-        if (containsMin)
+        if (rowMins[i] == globalMin)
         {
             for (size_t j = 0; j < n; j++)
             {
-                newArray[newRow][j] = j + 1;
+                newArray[newRow][j] = j + 1; // 1, 2, 3, ..., n
             }
             newRow++;
         }
     }
     
-    deleteArray(array, m, n);
-    m = newM;    
+    delete[] rowMins;
     return newArray;
 }
 
@@ -313,4 +328,17 @@ void deleteArray(int** array, const size_t m, const size_t n)
         delete[] array[i];
     }
     delete[] array;
+}
+
+int** copyArray(int** array, const size_t m, const size_t n)
+{
+    int** newArray = getNewArray(m, n);
+    for (size_t i = 0; i < m; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            newArray[i][j] = array[i][j];
+        }
+    }
+    return newArray;
 }
